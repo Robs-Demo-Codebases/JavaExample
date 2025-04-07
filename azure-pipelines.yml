@@ -1,0 +1,50 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool: "Linux"
+
+jobs: 
+  - job: Coverity_PR
+    displayName: 'Coverity Scan(PR)'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    steps:
+    - task: BlackDuckSecurityScan@2
+      inputs:
+        scanType: 'coverity'
+        coverityUrl: 'http://coverity:8080'
+        coverityUser: 'adouser'
+        coverityUserPassword: '${COVERITY_PASSWORD}'
+        coverityMarkBuildStatus: 'Failed'
+        coverityAzureToken: '$(AZURE_TOKEN)'
+        coverityLocal: true
+        coverityProjectName: 'JavaExample'
+        coverityStreamName: 'JavaExample'
+        coverityPrCommentEnabled: true
+        coverityBuildCommandForPolaris: 'mvn compile'
+        coverityCleanCommandForPolaris: 'mvn clean'
+
+
+
+  - job: Polaris_main
+    displayName: 'Polaris Scan - Full'
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    steps:
+    - task: BlackDuckSecurityScan@2
+      inputs:
+        coverityUrl: 'http://coverity:8080'
+        coverityUser: 'adouser'
+        coverityUserPassword: ${COVERITY_PASSWORD}
+        coverityMarkBuildStatus: 'Failed'
+        coverityAzureToken: $(AZURE_TOKEN)
+        coverityLocal: true
+        coverityProjectName: 'JavaExample'
+        coverityStreamName: 'JavaExample'
+        coverityPolicyView: 'POLICY'
+        coverityBuildCommandForPolaris: 'mvn compile'
+        coverityCleanCommandForPolaris: 'mvn clean'
+
