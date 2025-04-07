@@ -17,5 +17,7 @@ commit:
     # Absolute URL of where to commit the Coverity Connect results.
     url: http://coverity:8080
 
+    scm: git
+
 analyze:
   cov-analyze-args: [ "--disable-spotbugs" ]
