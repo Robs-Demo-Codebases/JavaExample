@@ -18,9 +18,9 @@ jobs:
         scanType: 'coverity'
         coverityUrl: 'http://coverity:8080'
         coverityUser: 'adouser'
-        coverityUserPassword: '${COVERITY_PASSWORD}'
+        coverityUserPassword: $(COVERITY_PASSWORD)
         coverityMarkBuildStatus: 'Failed'
-        coverityAzureToken: '$(AZURE_TOKEN)'
+        coverityAzureToken: $(AZURE_TOKEN)
         coverityLocal: true
         coverityProjectName: 'JavaExample'
         coverityStreamName: 'JavaExample'
@@ -30,8 +30,8 @@ jobs:
 
 
 
-  - job: Polaris_main
-    displayName: 'Polaris Scan - Full'
+  - job: Coverity_main
+    displayName: 'Coverity Scan - Full'
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     steps:
     - task: BlackDuckSecurityScan@2
@@ -39,7 +39,7 @@ jobs:
         scanType: 'coverity'
         coverityUrl: 'http://coverity:8080'
         coverityUser: 'adouser'
-        coverityUserPassword: ${COVERITY_PASSWORD}
+        coverityUserPassword: $(COVERITY_PASSWORD)
         coverityMarkBuildStatus: 'Failed'
         coverityAzureToken: $(AZURE_TOKEN)
         coverityLocal: true
