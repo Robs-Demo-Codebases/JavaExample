@@ -1,0 +1,56 @@
+
+stages:
+- test
+- polaris_scan
+  
+include:
+- remote: 'https://gitlab.com/blackduck-inc/black-duck-security-scan/-/raw/main/templates/security_scan.yml'
+
+variables:
+  SCAN_BRANCHES: "/^(main|master|develop|stage|release|feature_branch)$/" # Add 
+
+
+blackduck_security_scan_execution:
+  image: maven:3.9.9-amazoncorretto-8-debian
+  stage: polaris_scan
+  variables:
+    BRIDGE_POLARIS_SERVERURL: $POLARIS_SERVER_URL
+    BRIDGE_POLARIS_ACCESSTOKEN: $POLARIS_ACCESS_TOKEN
+    BRIDGE_POLARIS_ASSESSMENT_TYPES: 'SAST,SCA'
+    BRIDGE_POLARIS_APPLICATION_NAME: $CI_PROJECT_NAME
+    BRIDGE_POLARIS_PROJECT_NAME: $CI_PROJECT_NAME
+    BRIDGE_POLARIS_BRANCH_NAME: $CI_COMMIT_REF_NAME
+    BRIDGE_GITLAB_USER_TOKEN: $GITLAB_USER_TOKEN
+    INCLUDE_DIAGNOSTICS: 'true'
+  rules:
+    ### Use below configuration to run Black Duck full scan
+    - if: ($CI_COMMIT_BRANCH =~ $SCAN_BRANCHES && $CI_PIPELINE_SOURCE != 'merge_request_event')
+      variables:
+        BRIDGE_POLARIS_REPORTS_GITLAB_CREATE: 'true'
+        BRIDGE_POLARIS_REPORTS_GITLAB_DIR_PATH: $CI_PROJECT_DIR
+        BRIDGE_POLARIS_REPORTS_GITLAB_ISSUE_TYPES: 'SCA,SAST'
+        BRIDGE_POLARIS_REPORTS_GITLAB_SEVERITIES: 'CRITICAL,HIGH'
+        BRIDGE_POLARIS_REPORTS_GITLAB_GROUPSCAISSUES: 'true'
+    
+    ### Polaris PR scan
+    - if: ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ $SCAN_BRANCHES && $CI_PIPELINE_SOURCE == 'merge_request_event')
+      variables:
+        BRIDGE_POLARIS_PRCOMMENT_ENABLED: 'true'
+        BRIDGE_GITLAB_USER_TOKEN: $GITLAB_USER_TOKEN
+        BRIDGE_POLARIS_PRCOMMENT_SEVERITIES: 'CRITICAL,HIGH'
+  tags:
+    - linux # Name of your Gitlab runner
+  before_script:
+    - apt-get -qq update && apt-get install -y curl file unzip
+  script:
+    - curl -fLsS -o bridge.zip $BRIDGECLI_LINUX64 && unzip -qo -d /tmp bridge.zip && rm -f bridge.zip
+    - /tmp/bridge-cli-bundle-linux64/bridge-cli --stage polaris
+  artifacts:
+    when: always
+    reports:
+        sast: $CI_PROJECT_DIR/sast.json
+        dependency_scanning: $CI_PROJECT_DIR/sca.json
+    paths:
+      - .bridge # Used when INCLUDE_DIAGNOSTICS is enabled and BRIDGE_BLACKDUCK_REPORTS_SARIF_CREATE is enabled
+
+
