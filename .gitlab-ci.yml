@@ -11,7 +11,7 @@ variables:
 
 
 blackduck_security_scan_execution:
-  image: maven:3.9.9-amazoncorretto-8-debian
+  image: maven:3.9.9-amazoncorretto-17-debian
   stage: polaris_scan
   variables:
     BRIDGE_POLARIS_SERVERURL: $POLARIS_SERVER_URL

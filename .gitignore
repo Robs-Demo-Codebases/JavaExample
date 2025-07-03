@@ -34,3 +34,4 @@ build/
 idir/
 .mvn/
 .codesight/
+.bridge/
