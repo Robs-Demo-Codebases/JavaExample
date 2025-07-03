@@ -11,7 +11,7 @@ variables:
 
 
 blackduck_security_scan_execution:
-  image: maven:3.9.9-amazoncorretto-8-debian
+  image: maven:3.9.9-amazoncorretto-17-debian
   stage: polaris_scan
   variables:
     BRIDGE_POLARIS_SERVERURL: $POLARIS_SERVER_URL
@@ -43,7 +43,7 @@ blackduck_security_scan_execution:
   before_script:
     - apt-get -qq update && apt-get install -y curl file unzip
   script:
-    - curl -fLsS -o bridge.zip $BRIDGECLI_LINUX64 && unzip -qo -d /tmp bridge.zip && rm -f bridge.zip
+    - curl -fLsS -o bridge.zip https://repo.blackduck.com/artifactory/bds-integrations-release/com/blackduck/integration/bridge/binaries/bridge-cli-bundle/latest/bridge-cli-bundle-linux64.zip && unzip -qo -d /tmp bridge.zip && rm -f bridge.zip
     - /tmp/bridge-cli-bundle-linux64/bridge-cli --stage polaris
   artifacts:
     when: always
