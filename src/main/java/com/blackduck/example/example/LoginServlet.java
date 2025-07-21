@@ -35,18 +35,16 @@ public class LoginServlet extends HttpServlet {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
             // UNSAFE 
-            //String query = "select * from tbluser where username='" + username + "' and password = '" + password + "'";
-            //stmt = conn.createStatement();
-            //rs = stmt.executeQuery(query);
+            String query = "select * from tbluser where username='" + username + "' and password = '" + password + "'";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(query);
 
             // SAFE
-            String safeQuery = "select * from tbluser where username=? and password = ?";
-            prepStmt = conn.prepareStatement(safeQuery);
-            prepStmt.setString(1,username);
-            prepStmt.setString(2,password);
-            rs = prepStmt.executeQuery();
-
-
+            // String safeQuery = "select * from tbluser where username=? and password = ?";
+            // prepStmt = conn.prepareStatement(safeQuery);
+            // prepStmt.setString(1,username);
+            // prepStmt.setString(2,password);
+            // rs = prepStmt.executeQuery();
 
             if (rs.next()) {
                 // Login Successful if match is found
