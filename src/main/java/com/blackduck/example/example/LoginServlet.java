@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
             rs = stmt.executeQuery(query);
 
             // SAFE
-            String safeQuery = "select * from tbluser where username=? and password = ?";
+            // String safeQuery = "select * from tbluser where username=? and password = ?";
             // prepStmt = conn.prepareStatement(safeQuery);
             // prepStmt.setString(1,username);
             // prepStmt.setString(2,password);
@@ -67,4 +67,47 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("login.html?error=1");
         }
     }
+
+
+
+
 }
+
+
+	// protected static class HotSpotDiagnosticMXBeanHeapDumper implements HeapDumper {
+
+	// 	private final Object diagnosticMXBean;
+
+	// 	private final Method dumpHeapMethod;
+
+	// 	@SuppressWarnings("unchecked")
+	// 	protected HotSpotDiagnosticMXBeanHeapDumper() {
+	// 		try {
+	// 			Class<?> diagnosticMXBeanClass = ClassUtils
+	// 				.resolveClassName("com.sun.management.HotSpotDiagnosticMXBean", null);
+	// 			this.diagnosticMXBean = ManagementFactory
+	// 				.getPlatformMXBean((Class<PlatformManagedObject>) diagnosticMXBeanClass);
+	// 			this.dumpHeapMethod = ReflectionUtils.findMethod(diagnosticMXBeanClass, "dumpHeap", String.class,
+	// 					Boolean.TYPE);
+	// 		}
+	// 		catch (Throwable ex) {
+	// 			throw new HeapDumperUnavailableException("Unable to locate HotSpotDiagnosticMXBean", ex);
+	// 		}
+	// 	}
+
+	// 	@Override
+	// 	public File dumpHeap(Boolean live) throws IOException {
+	// 		File file = createTempFile();
+	// 		ReflectionUtils.invokeMethod(this.dumpHeapMethod, this.diagnosticMXBean, file.getAbsolutePath(),
+	// 				(live != null) ? live : true);
+	// 		return file;
+	// 	}
+
+	// 	private File createTempFile() throws IOException {
+	// 		String date = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm").format(LocalDateTime.now());
+	// 		File file = File.createTempFile("heap-" + date, ".hprof");
+	// 		file.delete();
+	// 		return file;
+	// 	}
+
+	// }
