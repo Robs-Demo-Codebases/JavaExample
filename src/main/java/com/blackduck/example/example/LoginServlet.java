@@ -23,7 +23,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         boolean success = false;
         Connection conn = null;
-        
+                
 
         try {
             conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/user", "root", "root");
@@ -35,16 +35,16 @@ public class LoginServlet extends HttpServlet {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
             // UNSAFE 
-            // String query = "select * from tbluser where username='" + username + "' and password = '" + password + "'";
-            // stmt = conn.createStatement();
-            // rs = stmt.executeQuery(query);
+            String query = "select * from tbluser where username='" + username + "' and password = '" + password + "'";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(query);
 
             // SAFE
-            String safeQuery = "select * from tbluser where username=? and password = ?";
-            prepStmt = conn.prepareStatement(safeQuery);
-            prepStmt.setString(1,username);
-            prepStmt.setString(2,password);
-            rs = prepStmt.executeQuery();
+            // String safeQuery = "select * from tbluser where username=? and password = ?";
+            // prepStmt = conn.prepareStatement(safeQuery);
+            // prepStmt.setString(1,username);
+            // prepStmt.setString(2,password);
+            // rs = prepStmt.executeQuery();
 
 
 
