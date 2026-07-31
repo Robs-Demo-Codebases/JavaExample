@@ -20,4 +20,4 @@ commit:
     scm: git
 
 analyze:
-  cov-analyze-args: [ "--disable-spotbugs" ]
+
