@@ -22,15 +22,9 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         boolean success = false;
-        Connection conn = null;
-        
-
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/user", "root", "root");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/user", "root", "root")) {
 
             Statement stmt = null;
-            PreparedStatement prepStmt = null;            
-            ResultSet rs = null;
 
             String username = request.getParameter("username");
             String password = request.getParameter("password");
@@ -41,25 +35,21 @@ public class LoginServlet extends HttpServlet {
 
             // SAFE
             String safeQuery = "select * from tbluser where username=? and password = ?";
-            prepStmt = conn.prepareStatement(safeQuery);
-            prepStmt.setString(1,username);
-            prepStmt.setString(2,password);
-            rs = prepStmt.executeQuery();
+            try (PreparedStatement prepStmt = conn.prepareStatement(safeQuery)) {
+                prepStmt.setString(1,username);
+                prepStmt.setString(2,password);
+                try (ResultSet rs = prepStmt.executeQuery()) {
 
 
 
-            if (rs.next()) {
-                // Login Successful if match is found
-                success = true;
+                    if (rs.next()) {
+                        // Login Successful if match is found
+                        success = true;
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                //stmt.close();
-                
-                conn.close();
-            } catch (Exception e) {}
         }
         if (success) {
             response.sendRedirect("home.html");
